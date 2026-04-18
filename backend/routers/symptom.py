@@ -63,6 +63,11 @@ def analyze_symptoms(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> SymptomResult:
+    if current_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Authenticated user was not found.",
+        )
     if not payload.symptoms:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -78,12 +83,24 @@ def analyze_symptoms(
             detail="Symptoms cannot be empty strings.",
         )
 
-    encoded_symptoms = mlb.transform([normalized_symptoms])
-    predicted_condition = model.predict(encoded_symptoms)[0]
+    try:
+        encoded_symptoms = mlb.transform([normalized_symptoms])
+        predicted_condition = model.predict(encoded_symptoms)[0]
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Unable to analyze the provided symptoms. Please review the symptom list and try again.",
+        ) from exc
 
     if hasattr(model, "predict_proba"):
-        probability_scores = model.predict_proba(encoded_symptoms)[0]
-        confidence_score = float(np.max(probability_scores))
+        try:
+            probability_scores = model.predict_proba(encoded_symptoms)[0]
+            confidence_score = float(np.max(probability_scores))
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Symptom analysis failed while calculating prediction confidence.",
+            ) from exc
     else:
         confidence_score = 0.5
 
@@ -101,9 +118,16 @@ def analyze_symptoms(
         assessment_type="symptom",
         image_path=None,
     )
-    db.add(assessment)
-    db.commit()
-    db.refresh(assessment)
+    try:
+        db.add(assessment)
+        db.commit()
+        db.refresh(assessment)
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unable to save the symptom assessment right now.",
+        ) from exc
 
     return SymptomResult(
         predicted_condition=predicted_condition,

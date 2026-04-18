@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from models.database import HealthAssessment, User, get_db
 from schemas.assessment import AssessmentResponse
@@ -25,12 +25,24 @@ def get_assessment_history(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> list[AssessmentResponse]:
-    assessments = (
-        db.query(HealthAssessment)
-        .filter(HealthAssessment.user_id == current_user.id)
-        .order_by(HealthAssessment.created_at.desc())
-        .all()
-    )
+    if current_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Authenticated user was not found.",
+        )
+
+    try:
+        assessments = (
+            db.query(HealthAssessment)
+            .filter(HealthAssessment.user_id == current_user.id)
+            .order_by(HealthAssessment.created_at.desc())
+            .all()
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Unable to load assessment history right now.",
+        ) from exc
 
     return [
         AssessmentResponse(

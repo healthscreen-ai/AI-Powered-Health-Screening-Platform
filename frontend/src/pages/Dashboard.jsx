@@ -11,6 +11,7 @@ import {
 } from 'chart.js'
 import { Bar } from 'react-chartjs-2'
 
+import ErrorMessage from '../components/ErrorMessage'
 import api from '../utils/api'
 
 
@@ -156,11 +157,7 @@ function Dashboard() {
         </div>
       </section>
 
-      {errorMessage ? (
-        <div className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {errorMessage}
-        </div>
-      ) : null}
+      <ErrorMessage message={errorMessage} />
 
       {!assessments.length ? (
         <section className="rounded-[2rem] border border-dashed border-sky-200 bg-white/80 p-10 text-center shadow-[0_18px_55px_rgba(14,116,144,0.06)]">

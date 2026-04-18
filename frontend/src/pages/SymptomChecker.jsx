@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import ErrorMessage from '../components/ErrorMessage'
 import ResultCard from '../components/ResultCard'
 import api from '../utils/api'
 
@@ -152,11 +153,7 @@ function SymptomChecker() {
               </div>
             </div>
 
-            {errorMessage ? (
-              <div className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {errorMessage}
-              </div>
-            ) : null}
+            <ErrorMessage message={errorMessage} />
 
             <button
               type="submit"

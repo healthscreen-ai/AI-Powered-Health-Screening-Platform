@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
+import ErrorMessage from '../components/ErrorMessage'
 import api from '../utils/api'
 
 
@@ -123,11 +124,7 @@ function Login() {
               ) : null}
             </div>
 
-            {errorMessage ? (
-              <div className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {errorMessage}
-              </div>
-            ) : null}
+            <ErrorMessage message={errorMessage} />
 
             <button
               type="submit"

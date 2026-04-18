@@ -55,4 +55,9 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)) -> Token:
 
 @router.get("/me", response_model=UserResponse)
 def read_current_user(current_user: User = Depends(get_current_user)) -> UserResponse:
+    if current_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User profile was not found.",
+        )
     return current_user

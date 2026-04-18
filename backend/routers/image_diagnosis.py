@@ -75,6 +75,11 @@ async def analyze_image(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> ImageResult:
+    if current_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Authenticated user was not found.",
+        )
     if not image.content_type or not image.content_type.startswith("image/"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -87,7 +92,13 @@ async def analyze_image(
 
     try:
         save_upload_file(image, saved_path)
-        input_tensor = preprocess_image(saved_path)
+        try:
+            input_tensor = preprocess_image(saved_path)
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The uploaded file could not be processed as a valid image.",
+            ) from exc
         model = load_model()
 
         with torch.no_grad():
@@ -108,9 +119,16 @@ async def analyze_image(
             assessment_type="image",
             image_path=str(saved_path),
         )
-        db.add(assessment)
-        db.commit()
-        db.refresh(assessment)
+        try:
+            db.add(assessment)
+            db.commit()
+            db.refresh(assessment)
+        except Exception as exc:
+            db.rollback()
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Unable to save the image assessment right now.",
+            ) from exc
 
         return ImageResult(
             predicted_condition=predicted_condition,
@@ -118,7 +136,14 @@ async def analyze_image(
             urgency_level=urgency_level,
             advice=advice,
         )
-    except Exception:
+    except HTTPException:
         if saved_path.exists():
             saved_path.unlink(missing_ok=True)
         raise
+    except Exception:
+        if saved_path.exists():
+            saved_path.unlink(missing_ok=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Image analysis failed. Please try again with another image.",
+        )

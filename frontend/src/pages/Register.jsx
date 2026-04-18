@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
+import ErrorMessage from '../components/ErrorMessage'
 import api from '../utils/api'
 
 
@@ -216,11 +217,7 @@ function Register() {
               </div>
             </div>
 
-            {serverError ? (
-              <div className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {serverError}
-              </div>
-            ) : null}
+            <ErrorMessage message={serverError} />
 
             <button
               type="submit"

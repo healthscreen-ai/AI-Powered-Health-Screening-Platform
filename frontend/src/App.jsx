@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
+import About from './pages/About'
 import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import ImageDiagnosis from './pages/ImageDiagnosis'
@@ -69,15 +70,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/about"
-            element={
-              <PlaceholderPage
-                title="About HealthScreen AI"
-                description="HealthScreen AI is designed to extend access to preliminary screening tools for rural and underserved communities."
-              />
-            }
-          />
+          <Route path="/about" element={<About />} />
         </Routes>
       </div>
     </BrowserRouter>

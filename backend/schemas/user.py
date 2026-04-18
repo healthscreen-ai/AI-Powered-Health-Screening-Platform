@@ -8,9 +8,9 @@ class UserCreate(BaseModel):
     full_name: str
     email: EmailStr
     password: str
-    age: int | None = None
-    gender: str | None = None
-    location: str | None = None
+    age: int
+    gender: str
+    location: str
 
 
 class UserLogin(BaseModel):

@@ -49,7 +49,7 @@ docker-compose up --build
 After startup:
 
 - Frontend: `http://localhost`
-- Backend API: `http://localhost:8000`
+- Backend API: `http://127.0.0.1:8001`
 - PostgreSQL: `localhost:5432`
 
 ## Local Development Setup

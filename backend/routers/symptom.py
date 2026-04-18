@@ -7,9 +7,9 @@ from sqlalchemy.orm import Session
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from models.database import HealthAssessment, User, get_db
-from schemas.symptom import SymptomInput, SymptomResult
-from utils.jwt import get_current_user
+from backend.models.database import HealthAssessment, User, get_db
+from backend.schemas.symptom import SymptomInput, SymptomResult
+from backend.utils.jwt import get_current_user
 
 
 router = APIRouter(prefix="/symptom", tags=["Symptom Checker"])

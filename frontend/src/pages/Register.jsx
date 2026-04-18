@@ -63,17 +63,28 @@ function Register() {
     setIsSubmitting(true)
 
     try {
-      await api.post('/auth/register', {
+      const payload = {
         ...formData,
         age: Number(formData.age),
+      }
+
+      console.log('Register request payload:', {
+        ...payload,
+        password: '***redacted***',
       })
+
+      const response = await api.post('/auth/register', payload)
+      console.log('Register response:', response.data)
 
       navigate('/login', {
         state: { message: 'Registration successful. Please log in.' },
       })
     } catch (error) {
+      console.error('Register error response:', error.response?.data || error.message)
       setServerError(
-        error.response?.data?.detail || 'Unable to create your account right now.',
+        error.response?.data?.detail ||
+          error.message ||
+          'Unable to create your account right now.',
       )
     } finally {
       setIsSubmitting(false)

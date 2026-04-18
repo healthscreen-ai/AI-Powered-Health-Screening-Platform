@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from models.database import SessionLocal, User
+from backend.models.database import SessionLocal, User
 
 
 SECRET_KEY = os.getenv("SECRET_KEY", "your_secret_key")

@@ -9,10 +9,10 @@ from torchvision import models
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
-from models.database import HealthAssessment, User, get_db
-from schemas.image import ImageResult
-from utils.image_utils import preprocess_image, save_upload_file
-from utils.jwt import get_current_user
+from backend.models.database import HealthAssessment, User, get_db
+from backend.schemas.image import ImageResult
+from backend.utils.image_utils import preprocess_image, save_upload_file
+from backend.utils.jwt import get_current_user
 
 
 router = APIRouter(prefix="/image", tags=["Image Diagnosis"])

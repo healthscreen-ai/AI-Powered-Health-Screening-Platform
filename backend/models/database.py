@@ -7,14 +7,44 @@ from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@localhost:5432/health_screening_platform",
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+INVALID_DATABASE_URL_MESSAGE = (
+    "DATABASE_URL is not configured. Please replace [YOUR-PASSWORD] with actual Supabase password."
 )
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = None
+SessionLocal = sessionmaker(autocommit=False, autoflush=False)
 Base = declarative_base()
+
+
+def validate_database_url(database_url: str | None = None) -> str:
+    url = database_url if database_url is not None else DATABASE_URL
+
+    if not url:
+        raise ValueError(
+            "DATABASE_URL is not configured. Please set the environment variable before starting the backend."
+        )
+
+    if "[YOUR-PASSWORD]" in url:
+        raise ValueError(INVALID_DATABASE_URL_MESSAGE)
+
+    return url
+
+
+def get_engine():
+    global engine
+
+    if engine is None:
+        validated_url = validate_database_url()
+        engine = create_engine(validated_url, pool_pre_ping=True)
+        SessionLocal.configure(bind=engine)
+
+    return engine
+
+
+def initialize_database() -> None:
+    current_engine = get_engine()
+    Base.metadata.create_all(bind=current_engine)
 
 
 class User(Base):
@@ -86,6 +116,7 @@ class Referral(Base):
 
 
 def get_db():
+    get_engine()
     db = SessionLocal()
     try:
         yield db

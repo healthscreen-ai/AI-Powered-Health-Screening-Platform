@@ -2,9 +2,9 @@ from sqlalchemy.orm import Session
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from models.database import HealthAssessment, User, get_db
-from schemas.assessment import AssessmentResponse
-from utils.jwt import get_current_user
+from backend.models.database import HealthAssessment, User, get_db
+from backend.schemas.assessment import AssessmentResponse
+from backend.utils.jwt import get_current_user
 
 
 router = APIRouter(prefix="/assessments", tags=["Assessments"])

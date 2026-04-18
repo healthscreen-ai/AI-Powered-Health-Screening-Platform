@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
+import Dashboard from './pages/Dashboard'
 import ImageDiagnosis from './pages/ImageDiagnosis'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
@@ -47,10 +48,9 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <PlaceholderPage
-                title="Personal Health Dashboard"
-                description="Track recent screenings, view trends, and surface next recommended actions in one place."
-              />
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
             }
           />
           <Route

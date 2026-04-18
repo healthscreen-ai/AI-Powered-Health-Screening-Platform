@@ -1,9 +1,10 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import SymptomChecker from './pages/SymptomChecker'
 
 function PlaceholderPage({ title, description }) {
   return (
@@ -21,6 +22,16 @@ function PlaceholderPage({ title, description }) {
       </div>
     </div>
   )
+}
+
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem('token')
+
+  if (!token) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children
 }
 
 function App() {
@@ -44,10 +55,9 @@ function App() {
           <Route
             path="/symptom-checker"
             element={
-              <PlaceholderPage
-                title="Symptom Checker"
-                description="Describe symptoms and receive an AI-assisted preliminary assessment with guidance on urgency and follow-up care."
-              />
+              <ProtectedRoute>
+                <SymptomChecker />
+              </ProtectedRoute>
             }
           />
           <Route

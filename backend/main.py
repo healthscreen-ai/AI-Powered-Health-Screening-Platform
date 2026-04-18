@@ -1,6 +1,8 @@
+import os
 import logging
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,6 +15,8 @@ from backend.routers.symptom import router as symptom_router
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
+load_dotenv()
+PORT = int(os.environ.get("PORT", 8000))
 
 
 @asynccontextmanager

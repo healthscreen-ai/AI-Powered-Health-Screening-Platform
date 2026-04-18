@@ -1,48 +1,60 @@
 # AI-Powered Health Screening Platform
 
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=0b1020)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white)
+
 ## Overview
 
-AI-Powered Health Screening Platform is a full-stack web application designed to
-provide AI-driven preliminary health assessments for rural and underserved
-communities. The project combines a modern React frontend, a FastAPI backend,
-machine learning workflows, and a PostgreSQL-ready data layer to support early
-screening, accessible reporting, and future clinical workflow integrations.
+AI-Powered Health Screening Platform is a full-stack web application built to
+deliver AI-assisted preliminary health assessments for rural and underserved
+communities. It combines a React frontend, FastAPI backend, PostgreSQL
+persistence, and machine learning workflows for symptom screening, skin-image
+screening, and longitudinal health history.
 
-The goal is to help communities with limited access to healthcare professionals
-receive timely, technology-assisted screening support. This platform is meant
-for preliminary guidance and workflow support, not as a replacement for
-licensed medical diagnosis or emergency care.
+The platform is designed to reduce access barriers, surface early screening
+signals, and guide users toward timely follow-up care. It is intended as a
+supportive educational and triage tool, not as a replacement for licensed
+medical professionals.
 
 ## Features
 
-- React frontend bootstrapped with Vite for a fast development experience
-- FastAPI backend prepared for REST API development and model-serving endpoints
-- Dedicated `ml_models` workspace for training scripts, experiments, and saved
-  models
-- Database folder reserved for PostgreSQL schema definitions and migrations
-- Docker workspace for containerization and deployment-ready packaging
-- Clear starter structure for scaling into authentication, screening workflows,
-  image analysis, and triage recommendations
+- Secure JWT-based authentication for registration, login, and protected routes
+- Symptom checker workflow powered by a trained Scikit-learn model
+- Image diagnosis workflow powered by a fine-tuned ResNet18 model
+- Personal dashboard with assessment history and condition trend charting
+- Dockerized frontend, backend, and PostgreSQL stack for local deployment
+- Clean Vite + React UI optimized for approachable healthcare workflows
 
 ## Tech Stack
 
 - React
 - FastAPI
 - PostgreSQL
-- Scikit-learn
 - PyTorch
+- Scikit-learn
 - Docker
 
-## Setup Instructions
-
-### 1. Clone the repository
+## Quick Start With Docker
 
 ```bash
 git clone https://github.com/sam15-ai/AI-Powered-Health-Screening-Platform.git
 cd AI-Powered-Health-Screening-Platform
+cp .env.example .env
+docker-compose up --build
 ```
 
-### 2. Frontend setup
+After startup:
+
+- Frontend: `http://localhost`
+- Backend API: `http://localhost:8000`
+- PostgreSQL: `localhost:5432`
+
+## Local Development Setup
+
+### Frontend
 
 ```bash
 cd frontend
@@ -50,9 +62,7 @@ npm install
 npm run dev
 ```
 
-The Vite development server will start locally and serve the React app.
-
-### 3. Backend setup
+### Backend
 
 ```bash
 cd backend
@@ -62,15 +72,14 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-The FastAPI app will be available locally, typically at
-`http://127.0.0.1:8000`.
+### Environment Variables
 
-### 4. Database and ML workflows
+Create a root `.env` file from `.env.example` and adjust values for your local
+setup:
 
-- Add PostgreSQL schema files and migration assets in `database/`
-- Place training scripts, notebooks, and exported models in `ml_models/`
-- Add Dockerfiles and compose assets in `docker/` as deployment requirements
-  become clearer
+```bash
+cp .env.example .env
+```
 
 ## Folder Structure
 
@@ -80,21 +89,11 @@ health-screening-platform/
 ├── backend/          # FastAPI app and backend modules
 ├── ml_models/        # ML training scripts and saved models
 ├── database/         # SQL schema files
-├── docker/           # Dockerfiles and container assets
+├── docker/           # Dockerfiles and Nginx config
+├── docker-compose.yml
+├── .env.example
 ├── .gitignore
 └── README.md
-```
-
-### Backend starter contents
-
-```text
-backend/
-├── main.py
-├── requirements.txt
-├── routers/
-├── models/
-├── schemas/
-└── utils/
 ```
 
 ## Contributing
@@ -106,6 +105,18 @@ Contributions are welcome. To contribute:
 3. Make your changes with clear commits
 4. Open a pull request describing the update and rationale
 
-When adding healthcare-related features, prioritize privacy, accessibility,
-ethical AI usage, and clinical safety review. Any predictive output should be
-treated as supportive screening guidance rather than definitive medical advice.
+When working on healthcare-related features, prioritize accessibility, privacy,
+ethical AI usage, and safe communication of risk.
+
+## Future Improvements
+
+- Multilingual support
+- Real ISIC dermatology dataset integration
+- SMS alerts for urgent screening follow-up
+- Mobile app experience for low-bandwidth communities
+
+## Disclaimer
+
+This project provides AI-assisted preliminary screening support for educational
+and workflow purposes only. It is not a medical diagnosis tool and must not be
+used as a substitute for professional medical advice, diagnosis, or treatment.

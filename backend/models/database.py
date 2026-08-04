@@ -2,12 +2,11 @@ import os
 import uuid
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, Column, DateTime, Float, ForeignKey, Integer, String, Text, create_engine
+from sqlalchemy import CheckConstraint, Column, DateTime, Float, ForeignKey, Integer, String, Text, create_engine, text
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 
-DATABASE_URL = os.getenv("DATABASE_URL", "")
 INVALID_DATABASE_URL_MESSAGE = (
     "DATABASE_URL is not configured. Please replace [YOUR-PASSWORD] with actual Supabase password."
 )
@@ -18,7 +17,7 @@ Base = declarative_base()
 
 
 def validate_database_url(database_url: str | None = None) -> str:
-    url = database_url if database_url is not None else DATABASE_URL
+    url = database_url if database_url is not None else os.getenv("DATABASE_URL", "")
 
     if not url:
         raise ValueError(
@@ -44,7 +43,8 @@ def get_engine():
 
 def initialize_database() -> None:
     current_engine = get_engine()
-    Base.metadata.create_all(bind=current_engine)
+    with current_engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
 
 
 class User(Base):
